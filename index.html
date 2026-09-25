@@ -30,21 +30,20 @@
             </div>
 
             <div id="items-container">
-                <div class="status-item">
-                    <h3>Service A</h3>
-                    <p id="service-a-status">Loading...</p>
-                </div>
-                <div class="status-item">
-                    <h3>Service B</h3>
-                    <p id="service-b-status">Loading...</p>
-                </div>
-                <div class="status-item">
-                    <h3>Service C</h3>
-                    <p id="service-c-status">Loading...</p>
-                </div>
-                <div class="status-item">
-                    <h3>Service D</h3>
-                    <p id="service-d-status">Loading...</p>
+                <div class="status-component">
+                    <div class="component-header">
+                        <span class="component-name">API Requests</span>
+                        <span class="component-status status-operational">Operational</span>
+                    </div>
+
+                    <!-- 30-day status bar container -->
+                    <div class="status-bar-container" id="api-status-bars"></div>
+
+                    <div class="status-footer">
+                        <span>30 days ago</span>
+                        <span class="uptime-percent">99.9% uptime</span>
+                        <span>Today</span>
+                    </div>
                 </div>
             </div>
         </div>
