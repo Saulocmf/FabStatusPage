@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Status Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- <div id="container"> -->
+        <div id="header">
+            <div id="title-container">
+                <!-- <img class="logo" src="img/status2.jpg"/> -->
+                <h1 class="blue">Fabrice's <span class="white">Status Page</span></h1>
+            </div>
+            <div id="search-container">
+                <input id="search-message" type="text" placeholder=" Send message..." />
+                <button type="submit" id="btn-search">Send</button>
+            </div>
+        </div>
+
+        <div id="status-container">
+            <!-- <p><h3>Welcome to the status page. Here you can find the current status of our services.</h3></p> -->
+            <div>
+                <h2>Overall Status</h2>
+                <p id="overall-status">All systems operational</p>
+            </div>
+
+            <div id="items-container">
+                <div class="status-item">
+                    <h3>Service A</h3>
+                    <p id="service-a-status">Loading...</p>
+                </div>
+                <div class="status-item">
+                    <h3>Service B</h3>
+                    <p id="service-b-status">Loading...</p>
+                </div>
+                <div class="status-item">
+                    <h3>Service C</h3>
+                    <p id="service-c-status">Loading...</p>
+                </div>
+                <div class="status-item">
+                    <h3>Service D</h3>
+                    <p id="service-d-status">Loading...</p>
+                </div>
+            </div>
+        </div>
+
+
+</body>
+<script src="script.js"></script>
+</html>
