@@ -1,0 +1,74 @@
+[
+  {
+    "id": "api-service",
+    "name": "REST API",
+    "currentStatus": "operational",
+    "history": [
+      { "date": "2026-09-01", "status": "operational" },
+      { "date": "2026-09-02", "status": "degraded" },
+      { "date": "2026-09-03", "status": "operational" },
+      { "date": "2026-09-04", "status": "outage" },
+      { "date": "2026-09-05", "status": "operational" }
+    ]
+  },
+  {
+    "id": "database-service",
+    "name": "Database Cluster",
+    "currentStatus": "operational",
+    "history": [
+      { "date": "2026-09-01", "status": "operational" },
+      { "date": "2026-09-02", "status": "operational" },
+      { "date": "2026-09-03", "status": "degraded" },
+      { "date": "2026-09-04", "status": "operational" },
+      { "date": "2026-09-05", "status": "operational" }
+    ]
+  },
+  {
+    "id": "auth-service",
+    "name": "Authentication System",
+    "currentStatus": "outage",
+    "history": [
+      {"date": "2026-09-01", "status": "operational"},
+      {"date": "2026-09-02", "status": "operational"},
+      {"date": "2026-09-03", "status": "degraded"},
+      {"date": "2026-09-04", "status": "outage"},
+      {"date": "2026-09-05", "status": "outage"}
+    ]
+  },
+  {
+    "id": "cdn-service",
+    "name": "CDN & Static Assets",
+    "currentStatus": "operational",
+    "history": [
+      {"date": "2026-09-01", "status": "operational"},
+      {"date": "2026-09-02", "status": "operational"},
+      {"date": "2026-09-03", "status": "operational"},
+      {"date": "2026-09-04", "status": "operational"},
+      {"date": "2026-09-05", "status": "operational"}
+    ]
+  },
+  {
+    "id": "payments-service",
+    "name": "Payment Gateway",
+    "currentStatus": "operational",
+    "history": [
+      {"date": "2026-09-01", "status": "operational"},
+      {"date": "2026-09-02", "status": "operational"},
+      {"date": "2026-09-03", "status": "operational"},
+      {"date": "2026-09-04", "status": "operational"},
+      {"date": "2026-09-05", "status": "operational"}
+    ]
+  },
+  {
+    "id": "email-service",
+    "name": "Notification Engine",
+    "currentStatus": "degraded",
+    "history": [
+      {"date": "2026-09-01", "status": "operational"},
+      {"date": "2026-09-02", "status": "operational"},
+      {"date": "2026-09-03", "status": "degraded"},
+      {"date": "2026-09-04", "status": "operational"},
+      {"date": "2026-09-05", "status": "degraded"}
+    ]
+  }
+]

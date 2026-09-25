@@ -13,12 +13,7 @@
     <!-- <div id="container"> -->
         <div id="header">
             <div id="title-container">
-                <!-- <img class="logo" src="img/status2.jpg"/> -->
                 <h1 class="blue">Fabrice's <span class="white">Status Page</span></h1>
-            </div>
-            <div id="search-container">
-                <input id="search-message" type="text" placeholder=" Send message..." />
-                <button type="submit" id="btn-search">Send</button>
             </div>
         </div>
 
@@ -29,26 +24,12 @@
                 <p id="overall-status">All systems operational</p>
             </div>
 
-            <div id="items-container">
-                <div class="status-component">
-                    <div class="component-header">
-                        <span class="component-name">API Requests</span>
-                        <span class="component-status status-operational">Operational</span>
-                    </div>
-
-                    <!-- 30-day status bar container -->
-                    <div class="status-bar-container" id="api-status-bars"></div>
-
-                    <div class="status-footer">
-                        <span>30 days ago</span>
-                        <span class="uptime-percent">99.9% uptime</span>
-                        <span>Today</span>
-                    </div>
-                </div>
-            </div>
+            <!-- Services List Container -->
+            <div id="status-dashboard" class="status-dashboard"></div>
+            
         </div>
 
 
 </body>
-<script src="script.js"></script>
+<script type="module" src="script.js"></script>
 </html>
