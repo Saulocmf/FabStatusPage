@@ -1,8 +1,56 @@
 import servicesData from './servicesData.json' with { type: 'json' };
-console.log(servicesData);
+// console.log(servicesData);
+const API_URL = "https://app.leila.one/api/status";
 
+async function fetchLiveStatusData() {
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/html" },
+      // body: new URLSearchParams({
+      //   format: "json",
+      //   custom_uptime_ratios: "30", // Get 30-day uptime ratio
+      //   response_times: "1"        // Get recent response logs
+      // })
+    });
+
+    const data = await response.json();
+    console.log("Fetched live status data:", data);
+  
+  } catch (error) {
+    console.error("Failed to fetch status data:", error);
+    return null;
+  }
+}
+
+// setInterval(fetchLiveStatusData, 1000);
+
+function updateGlobalBanner(services) {
+  const banner = document.getElementById("global-status-banner");
+  const bannerText = document.getElementById("global-status-text");
+
+  // Check if any service has an outage or degraded performance
+  const hasMajorOutage = services.some(s => s.currentStatus === "outage");
+  const hasPartialOutage = services.some(s => s.currentStatus === "degraded");
+
+  // Reset classes
+  banner.className = "global-banner";
+
+  if (hasMajorOutage) {
+    banner.classList.add("banner-outage");
+    bannerText.textContent = "Major System Outage";
+  } else if (hasPartialOutage) {
+    banner.classList.add("banner-degraded");
+    bannerText.textContent = "Active System Disruption";
+  } else {
+    banner.classList.add("banner-operational");
+    bannerText.textContent = "All Systems Operational";
+  }
+}
 
 function renderDashboard(services, totalDays = 30) {
+  updateGlobalBanner(services)
+
   const dashboard = document.getElementById("status-dashboard");
   dashboard.innerHTML = ""; // Clear existing UI
 
@@ -59,5 +107,7 @@ function formatStatusText(status) {
   }
 }
 
+
 // Initialize the dashboard
 renderDashboard(servicesData, 30);
+

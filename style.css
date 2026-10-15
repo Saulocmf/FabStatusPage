@@ -47,7 +47,19 @@ body {
     margin: 0 auto;
 }
 
-#overall-status {
+.global-banner {
+  max-width: 650px;
+  margin: 0 auto 20px auto;
+  padding: 16px 20px;
+  border-radius: 6px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  color: #ffffff;
+}
+/* #overall-status {
     background-color: #28a745;
     border: 1px solid #0abc93;
     padding: 20px 0px ;
@@ -56,7 +68,7 @@ body {
     width: 650px;
     max-width: calc(100% - 20px);
     border-radius: 8px;
-}
+} */
 
 #status-dashboard {
     display: grid;
@@ -67,6 +79,17 @@ body {
     /* padding: 0 10px; */
 }
 
+.banner-operational {
+  background-color: #2da44e;
+}
+
+.banner-degraded {
+  background-color: #d29922;
+}
+
+.banner-outage {
+  background-color: #cf222e;
+}
 
 h2 {
     color: #000000;
@@ -112,9 +135,9 @@ h3 {
     color: #24292f; 
 }
 /* Status Text Colors */
-.status-operational { color: #1a7f37; font-weight: 500; }
+/* .status-operational { color: #1a7f37; font-weight: 500; }
 .status-degraded    { color: #9a6700; font-weight: 500; }
-.status-outage      { color: #cf222e; font-weight: 500; }
+.status-outage      { color: #cf222e; font-weight: 500; } */
 
 /* Grid layout for daily bars */
 .status-bar-container {
