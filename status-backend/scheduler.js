@@ -36,6 +36,34 @@ async function pingService(service) {
       [service.id, 'outage', 0]
     );
   }
+  // 2. Update daily_summaries table for today
+  updateDailySummary(service.id);
+}
+
+function updateDailySummary(serviceId) {
+  const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+  // Calculate today's worst status and save to daily_summaries
+  const rollupQuery = `
+    INSERT INTO daily_summaries (service_id, date, worst_status)
+    VALUES (
+      ?, 
+      ?, 
+      (
+        SELECT 
+          CASE 
+            WHEN SUM(CASE WHEN status = 'outage' THEN 1 ELSE 0 END) > 0 THEN 'outage'
+            WHEN SUM(CASE WHEN status = 'degraded' THEN 1 ELSE 0 END) > 0 THEN 'degraded'
+            ELSE 'operational'
+          END
+        FROM checks 
+        WHERE service_id = ? AND DATE(timestamp) = ?
+      )
+    )
+    ON CONFLICT(service_id, date) DO UPDATE SET
+      worst_status = excluded.worst_status;
+  `;
+
+  db.run(rollupQuery, [serviceId, today, serviceId, today]);
 }
 
 function startScheduler() {

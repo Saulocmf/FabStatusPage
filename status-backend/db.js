@@ -12,7 +12,17 @@ db.serialize(() => {
             response_time_ms INTEGER,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
             )
-            `);
+    `);
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS daily_summaries (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            service_id TEXT NOT NULL,
+            date DATE NOT NULL,
+            worst_status TEXT NOT NULL, -- 'operational', 'degraded', 'outage',
+            UNIQUE(service_id, date)
+        )
+    `);
 });
 
 module.exports = db;
