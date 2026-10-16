@@ -1,39 +1,50 @@
-import servicesData from './servicesData.json' with { type: 'json' };
-// console.log(servicesData);
-const API_URL = "https://app.leila.one/api/status";
+// import servicesData from './servicesData.json' with { type: 'json' };
+
+const API_URL = "http://localhost:3000/server/status-history";;
 
 async function fetchLiveStatusData() {
   try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/html" },
-      // body: new URLSearchParams({
-      //   format: "json",
-      //   custom_uptime_ratios: "30", // Get 30-day uptime ratio
-      //   response_times: "1"        // Get recent response logs
-      // })
+    // 2. Perform a standard GET request to fetch the 30-day history map
+    const response = await fetch(API_URL);
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+    const historyByService = await response.json();
+    console.log("Fetched live status data:", historyByService);
+
+    // 3. Transform the raw backend object into the format renderDashboard expects
+    const services = Object.keys(historyByService).map(serviceId => {
+      const history = historyByService[serviceId];
+      
+      // Determine current status based on today's latest recorded status
+      const latestEntry = history.length ? history[history.length - 1] : null;
+      const currentStatus = latestEntry ? latestEntry.status : "operational";
+
+      return {
+        id: serviceId,
+        // Format service ID into a clean display title (e.g., "api-service" -> "API SERVICE")
+        name: serviceId.replace(/-/g, " ").toUpperCase(),
+        currentStatus: currentStatus,
+        history: history
+      };
     });
 
-    const data = await response.json();
-    console.log("Fetched live status data:", data);
-  
+    // 4. Render the dashboard with live backend data
+    renderDashboard(services, 30);
+
   } catch (error) {
     console.error("Failed to fetch status data:", error);
-    return null;
   }
 }
 
-// setInterval(fetchLiveStatusData, 1000);
 
+// Global Banner Renderer
 function updateGlobalBanner(services) {
   const banner = document.getElementById("global-status-banner");
   const bannerText = document.getElementById("global-status-text");
 
-  // Check if any service has an outage or degraded performance
   const hasMajorOutage = services.some(s => s.currentStatus === "outage");
   const hasPartialOutage = services.some(s => s.currentStatus === "degraded");
 
-  // Reset classes
   banner.className = "global-banner";
 
   if (hasMajorOutage) {
@@ -48,18 +59,17 @@ function updateGlobalBanner(services) {
   }
 }
 
+// Dashboard Renderer
 function renderDashboard(services, totalDays = 30) {
-  updateGlobalBanner(services)
+  updateGlobalBanner(services);
 
   const dashboard = document.getElementById("status-dashboard");
-  dashboard.innerHTML = ""; // Clear existing UI
+  dashboard.innerHTML = ""; 
 
   services.forEach(service => {
-    // 1. Create the card container for this service
     const serviceCard = document.createElement("div");
     serviceCard.className = "status-component";
 
-    // 2. Build the header and bar container markup
     serviceCard.innerHTML = `
       <div class="component-header">
         <span class="component-name">${service.name}</span>
@@ -74,16 +84,14 @@ function renderDashboard(services, totalDays = 30) {
       </div>
     `;
 
-    // 3. Append the service card to the main dashboard
     dashboard.appendChild(serviceCard);
 
-    // 4. Fill in the status bars for this specific service
     const barContainer = serviceCard.querySelector(`#bars-${service.id}`);
     renderSingleServiceBars(barContainer, service.history, totalDays);
   });
 }
 
-// Helper to render bars into a specific container
+// Render Bars Helper
 function renderSingleServiceBars(container, historyData, totalDays) {
   for (let i = 0; i < totalDays; i++) {
     const bar = document.createElement("div");
@@ -97,7 +105,7 @@ function renderSingleServiceBars(container, historyData, totalDays) {
   }
 }
 
-// Helper for status text formatting
+// Status Formatting Helper
 function formatStatusText(status) {
   switch (status) {
     case "operational": return "Operational";
@@ -107,7 +115,8 @@ function formatStatusText(status) {
   }
 }
 
+// Initial fetch on page load
+fetchLiveStatusData();
 
-// Initialize the dashboard
-renderDashboard(servicesData, 30);
-
+// Optional: Poll every 60 seconds to keep live status updated automatically
+setInterval(fetchLiveStatusData, 60000);

@@ -1,14 +1,11 @@
-const express = require('express');
+var express = require('express');
 const cors = require('cors');
-const db = require('./db');
-const startScheduler = require('./scheduler');
-
-const app = express();
-app.use(cors());
-app.use(express.json());
+const db = require('../db.js');
+const startScheduler = require('../scheduler');
+var router = express.Router();
 
 // GET /api/status-history - Super fast read directly from daily_summaries
-app.get('/api/status-history', (req, res) => {
+router.get('/status-history', (req, res) => {
   const query = `
     SELECT service_id, date, worst_status AS status
     FROM daily_summaries
@@ -35,5 +32,10 @@ app.get('/api/status-history', (req, res) => {
   });
 });
 
+
 startScheduler();
-app.listen(3000, () => console.log('Status server running on http://localhost:3000'));
+// router.listen(3000, () => console.log('Status server running on http://localhost:3000'));
+
+
+
+module.exports = router;
