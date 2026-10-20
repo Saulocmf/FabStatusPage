@@ -91,16 +91,38 @@ function renderDashboard(services, totalDays = 30) {
   });
 }
 
-// Render Bars Helper
-function renderSingleServiceBars(container, historyData, totalDays) {
-  for (let i = 0; i < totalDays; i++) {
+function renderSingleServiceBars(container, historyData, totalDays = 30) {
+  container.innerHTML = ""; // Clear existing bars
+
+  // 1. Convert history array into a fast lookup Map keyed by date string ("YYYY-MM-DD")
+  const historyMap = new Map(
+    (historyData || []).map(item => [item.date, item.status])
+  );
+
+  const today = new Date();
+
+  // 2. Loop chronologically from (totalDays - 1) days ago through Today
+  for (let i = totalDays - 1; i >= 0; i--) {
+    const targetDate = new Date();
+    targetDate.setDate(today.getDate() - i);
+
+    // Format date as "YYYY-MM-DD" matching your SQLite database output
+    const dateString = targetDate.toISOString().split("T")[0];
+
+    const formattedDate = targetDate.toLocaleDateString(navigator.language, {
+      month: "numeric",
+      day: "numeric",
+      year: "numeric"
+    });
+
+    // 3. Lookup status for this date, or fallback to 'no-data' (or 'operational')
+    const dayStatus = historyMap.get(dateString) || "no-data";
+
+    // 4. Create and append the bar element
     const bar = document.createElement("div");
-    bar.className = "day-bar";
+    bar.className = `day-bar ${dayStatus}`;
+    bar.title = `${formattedDate}: ${dayStatus.replace("-", " ").toUpperCase()}`;
 
-    const dayData = historyData[i] || { status: "operational" };
-    bar.classList.add(dayData.status);
-
-    bar.title = `${dayData.date || "Day " + (i + 1)}: ${dayData.status.toUpperCase()}`;
     container.appendChild(bar);
   }
 }

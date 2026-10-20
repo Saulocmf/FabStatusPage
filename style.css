@@ -162,4 +162,4 @@ h3 {
 .day-bar.operational { background-color: #2da44e; }
 .day-bar.degraded    { background-color: #d29922; }
 .day-bar.outage      { background-color: #cf222e; }
-.day-bar.no-data     { background-color: #8c959f; }
+.day-bar.no-data     { background-color: #8c959f; opacity: 0.5;}
