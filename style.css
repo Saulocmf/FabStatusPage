@@ -152,7 +152,10 @@ h3 {
     transition: opacity 0.10s ease;
 }
 
-.day-bar:hover { opacity: 0.75; }
+.day-bar:hover {
+  /* opacity: 0.75;  */
+  box-shadow: inset 0 0 0 100px rgba(0, 0, 0, 0.2);
+}
 
 .day-bar::after {
   content: attr(data-tooltip);
@@ -173,7 +176,7 @@ h3 {
   visibility: hidden;
   transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); /* Solid drop shadow for clean separation */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Solid drop shadow for clean separation */
 }
 
 .day-bar::before {
@@ -205,7 +208,7 @@ h3 {
 }
 
   /* Status Bar Colors */
-.day-bar.operational { background-color: #2da44e; }
-.day-bar.degraded    { background-color: #d29922; }
-.day-bar.outage      { background-color: #cf222e; }
-.day-bar.no-data     { background-color: #8c959f; opacity: 0.5;}
+.day-bar.operational { background-color: #2da44fde; }
+.day-bar.degraded    { background-color: #d29a22dd; }
+.day-bar.outage      { background-color: #cf222ddf; }
+.day-bar.no-data     { background-color: #8c959f93;}
