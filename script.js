@@ -1,6 +1,4 @@
-// import servicesData from './servicesData.json' with { type: 'json' };
-
-const API_URL = "http://localhost:3000/server/status-history";;
+const API_URL = "http://localhost:3000/server/status-history";
 
 async function fetchLiveStatusData() {
   try {
@@ -9,15 +7,16 @@ async function fetchLiveStatusData() {
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
     const historyByService = await response.json();
-    console.log("Fetched live status data:", historyByService);
+    // console.log("Fetched live status data:", historyByService);
 
     // 3. Transform the raw backend object into the format renderDashboard expects
     const services = Object.keys(historyByService).map(serviceId => {
       const history = historyByService[serviceId];
-      
+
       // Determine current status based on today's latest recorded status
       const latestEntry = history.length ? history[history.length - 1] : null;
       const currentStatus = latestEntry ? latestEntry.status : "operational";
+      console.log(`Service ${serviceId} current status: ${currentStatus}`);
 
       return {
         id: serviceId,
@@ -42,7 +41,7 @@ function updateGlobalBanner(services) {
   const banner = document.getElementById("global-status-banner");
   const bannerText = document.getElementById("global-status-text");
 
-  const hasMajorOutage = services.some(s => s.currentStatus === "outage");
+  const hasMajorOutage = services.some(s => s.currentStatus === "unhealthy");
   const hasPartialOutage = services.some(s => s.currentStatus === "degraded");
 
   banner.className = "global-banner";
@@ -132,7 +131,7 @@ function formatStatusText(status) {
   switch (status) {
     case "operational": return "Operational";
     case "degraded": return "Partial Outage";
-    case "outage": return "Major Outage";
+    case "unhealthy": return "Major Outage";
     default: return "Unknown";
   }
 }

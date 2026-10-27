@@ -32,10 +32,7 @@ router.get('/status-history', (req, res) => {
   });
 });
 
-
 startScheduler();
 // router.listen(3000, () => console.log('Status server running on http://localhost:3000'));
-
-
 
 module.exports = router;

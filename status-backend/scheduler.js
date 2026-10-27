@@ -1,11 +1,16 @@
 const cron = require('node-cron');
 const db = require('./db');
 
-const SERVICES = [
-  { id: 'status-service', url: 'https://app.leila.one/api/status' },
-//   { id: 'auth-service', url: 'https://auth.yourdomain.com/health' },
-//   { id: 'cdn-service', url: 'https://cdn.yourdomain.com/status' }
-];
+// const SERVICES = JSON.parse(process.env.SERVICES_CONFIG);
+let SERVICES = [];
+try {
+  if (process.env.SERVICES_CONFIG) {
+    SERVICES = JSON.parse(process.env.SERVICES_CONFIG);
+  }
+} catch (error) {
+  console.error("❌ Failed to parse SERVICES_CONFIG from .env file. Check your JSON syntax:", error.message);
+}
+console.log("Loaded services:", SERVICES);
 
 async function pingService(service) {
   const start = Date.now();
@@ -14,8 +19,7 @@ async function pingService(service) {
     const duration = Date.now() - start;
 
     const data = await response.json();
-
-    console.log(`[${new Date().toISOString()}] Response from ${service.id}:`, data);
+    // console.log(`[${new Date().toISOString()}] Response from ${service.id}:`, data);
 
     // Adjust logic if "healthy" is the only operational state
     let mappedStatus = 'degraded';
@@ -29,7 +33,7 @@ async function pingService(service) {
     );
 
   } catch (err) {
-    console.error(`[${new Date().toISOString()}] Error pinging ${service.id}:`, err.message);
+    // console.error(`[${new Date().toISOString()}] Error pinging ${service.id}:`, err.message);
 
     db.run(
       `INSERT INTO checks (service_id, status, response_time_ms) VALUES (?, ?, ?)`,
