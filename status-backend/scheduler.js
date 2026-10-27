@@ -1,6 +1,10 @@
 const cron = require('node-cron');
 const db = require('./db');
 
+// Read minutes from .env, default to 5 if missing
+const intervalMinutes = process.env.CHECK_INTERVAL_MINUTES || 5;
+const cronSchedule = `*/${intervalMinutes} * * * *`;
+
 // const SERVICES = JSON.parse(process.env.SERVICES_CONFIG);
 let SERVICES = [];
 try {
@@ -71,8 +75,8 @@ function updateDailySummary(serviceId) {
 }
 
 function startScheduler() {
-  // Runs every 5 minutes: '*/5 * * * *'
-  cron.schedule('*/5 * * * *', () => {
+  // Runs every ${intervalMinutes} minutes: `${cronSchedule}`
+  cron.schedule(cronSchedule, () => {
     console.log(`\n--- Health Check Triggered [${new Date().toISOString()}] ---`);
     SERVICES.forEach(pingService);
   });

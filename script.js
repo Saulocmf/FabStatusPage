@@ -105,8 +105,8 @@ function renderSingleServiceBars(container, historyData, totalDays = 30) {
     const dateString = targetDate.toISOString().split("T")[0];
 
     const formattedDate = targetDate.toLocaleDateString(navigator.language, {
-      month: "numeric",
       day: "numeric",
+      month: "short", //"numeric",
       year: "numeric"
     });
 
@@ -122,7 +122,6 @@ function renderSingleServiceBars(container, historyData, totalDays = 30) {
       "data-tooltip", 
       `${formattedDate}: ${dayStatus.replace("-", " ").toUpperCase()}`
     );
-
     container.appendChild(bar);
   }
 }
