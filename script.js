@@ -92,19 +92,15 @@ function renderDashboard(services, totalDays = 30) {
 
 function renderSingleServiceBars(container, historyData, totalDays = 30) {
   container.innerHTML = ""; // Clear existing bars
-
   // 1. Convert history array into a fast lookup Map keyed by date string ("YYYY-MM-DD")
   const historyMap = new Map(
     (historyData || []).map(item => [item.date, item.status])
   );
-
   const today = new Date();
-
   // 2. Loop chronologically from (totalDays - 1) days ago through Today
   for (let i = totalDays - 1; i >= 0; i--) {
     const targetDate = new Date();
     targetDate.setDate(today.getDate() - i);
-
     // Format date as "YYYY-MM-DD" matching your SQLite database output
     const dateString = targetDate.toISOString().split("T")[0];
 
@@ -120,7 +116,12 @@ function renderSingleServiceBars(container, historyData, totalDays = 30) {
     // 4. Create and append the bar element
     const bar = document.createElement("div");
     bar.className = `day-bar ${dayStatus}`;
-    bar.title = `${formattedDate}: ${dayStatus.replace("-", " ").toUpperCase()}`;
+    // bar.title = `${formattedDate}: ${dayStatus.replace("-", " ").toUpperCase()}`;
+    // Set custom attribute for the CSS popover instead of .title
+    bar.setAttribute(
+      "data-tooltip", 
+      `${formattedDate}: ${dayStatus.replace("-", " ").toUpperCase()}`
+    );
 
     container.appendChild(bar);
   }

@@ -134,10 +134,6 @@ h3 {
     font-weight: 600; 
     color: #24292f; 
 }
-/* Status Text Colors */
-/* .status-operational { color: #1a7f37; font-weight: 500; }
-.status-degraded    { color: #9a6700; font-weight: 500; }
-.status-outage      { color: #cf222e; font-weight: 500; } */
 
 /* Grid layout for daily bars */
 .status-bar-container {
@@ -157,6 +153,56 @@ h3 {
 }
 
 .day-bar:hover { opacity: 0.75; }
+
+.day-bar::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 8px); /* Positioned below the bar with an 8px gap */
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px); /* Start slightly shifted up for transition */
+  background: #1e2328; /* 100% solid, fully opaque background (no transparency) */
+  color: #ffffff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); /* Solid drop shadow for clean separation */
+}
+
+.day-bar::before {
+  content: "";
+  position: absolute;
+  top: 95%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #24292f transparent;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+  z-index: 1000;
+}
+
+/* 4. Trigger Show on Hover */
+.day-bar:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0); /* Slide into place */
+}
+
+.day-bar:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
 
   /* Status Bar Colors */
 .day-bar.operational { background-color: #2da44e; }
