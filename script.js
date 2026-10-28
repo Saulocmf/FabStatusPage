@@ -1,5 +1,8 @@
-const API_URL = "http://localhost:3000/server/status-history";
+// Configurable constants for the frontend:
+const API_URL = window.APP_CONFIG.BACKEND_API_URL;
+const frontendPollInterval = window.APP_CONFIG.FRONTEND_POLL_INTERVAL_MS;
 
+// Function to fetch live status data from the backend and render the dashboard
 async function fetchLiveStatusData() {
   try {
     // 2. Perform a standard GET request to fetch the 30-day history map
@@ -136,8 +139,9 @@ function formatStatusText(status) {
   }
 }
 
+
 // Initial fetch on page load
 fetchLiveStatusData();
 
-// Optional: Poll every 60 seconds to keep live status updated automatically
-setInterval(fetchLiveStatusData, 60000);
+// Set up periodic polling based on the configured interval
+setInterval(fetchLiveStatusData, frontendPollInterval);

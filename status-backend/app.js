@@ -10,7 +10,6 @@ var usersRouter = require('./routes/users');
 var serverRouter = require('./routes/server');
 const cors = require('cors');
 
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
