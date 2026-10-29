@@ -32,10 +32,41 @@ router.get('/status-history', (req, res) => {
   });
 });
 
+
+// GET /api/status-live - Fetches the most recent ping status from the 'checks' table
+router.get('/status-live', (req, res) => {
+  const query = `
+    SELECT c.service_id, c.status, c.response_time_ms, c.timestamp
+    FROM checks c
+    INNER JOIN (
+      SELECT service_id, MAX(timestamp) AS max_time
+      FROM checks
+      GROUP BY service_id
+    ) latest ON c.service_id = latest.service_id AND c.timestamp = latest.max_time
+  `;
+
+  db.all(query, [], (err, rows) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    // Format output as an object keyed by service_id
+    const liveStatusData = {};
+    rows.forEach(row => {
+      liveStatusData[row.service_id] = {
+        status: row.status,
+        response_time_ms: row.response_time_ms,
+        timestamp: row.timestamp
+      };
+    });
+
+    res.json(liveStatusData);
+  });
+});
+
 startScheduler();
-// router.listen(3000, () => console.log('Status server running on http://localhost:3000'));
 
 module.exports = router;
+
+// router.listen(3000, () => console.log('Status server running on http://localhost:3000'));
 
 // endpoint to provide frontend with the configured polling interval
 // router.get('/config', (req, res) => {

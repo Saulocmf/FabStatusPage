@@ -1,23 +1,23 @@
 // Configurable constants for the frontend:
-const API_URL = window.APP_CONFIG.BACKEND_API_URL;
+const API_HISTORY = window.APP_CONFIG.BACKEND_API_DAILY_SUMMARY ;
+const API_STATUS_LIVE = window.APP_CONFIG.BACKEND_API_LIVE_STATUS;
 const frontendPollInterval = window.APP_CONFIG.FRONTEND_POLL_INTERVAL_MS;
 
 // Function to fetch live status data from the backend and render the dashboard
 async function fetchLiveStatusData() {
   try {
-    // 2. Perform a standard GET request to fetch the 30-day history map
-    const response = await fetch(API_URL);
+    const response = await fetch(API_STATUS_LIVE);
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-    const historyByService = await response.json();
-    // console.log("Fetched live status data:", historyByService);
+    const serviceStatuses = await response.json();
+    // console.log("Fetched live status data:", serviceStatuses);
 
     // 3. Transform the raw backend object into the format renderDashboard expects
-    const services = Object.keys(historyByService).map(serviceId => {
-      const history = historyByService[serviceId];
+    const services = Object.keys(serviceStatuses).map(serviceId => {
+      const service = serviceStatuses[serviceId];
 
       // Determine current status based on today's latest recorded status
-      const latestEntry = history.length ? history[history.length - 1] : null;
+      const latestEntry = service.length ? service[service.length - 1] : null;
       const currentStatus = latestEntry ? latestEntry.status : "operational";
       console.log(`Service ${serviceId} current status: ${currentStatus}`);
 
@@ -26,7 +26,7 @@ async function fetchLiveStatusData() {
         // Format service ID into a clean display title (e.g., "api-service" -> "API SERVICE")
         name: serviceId.replace(/-/g, " ").toUpperCase(),
         currentStatus: currentStatus,
-        history: history
+        // history: history
       };
     });
 
@@ -44,7 +44,7 @@ function updateGlobalBanner(services) {
   const banner = document.getElementById("global-status-banner");
   const bannerText = document.getElementById("global-status-text");
 
-  const hasMajorOutage = services.some(s => s.currentStatus === "unhealthy");
+  const hasMajorOutage = services.some(s => s.currentStatus === "outage");
   const hasPartialOutage = services.some(s => s.currentStatus === "degraded");
 
   banner.className = "global-banner";
@@ -134,7 +134,7 @@ function formatStatusText(status) {
   switch (status) {
     case "operational": return "Operational";
     case "degraded": return "Partial Outage";
-    case "unhealthy": return "Major Outage";
+    case "outage": return "Major Outage";
     default: return "Unknown";
   }
 }

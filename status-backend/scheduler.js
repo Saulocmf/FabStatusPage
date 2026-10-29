@@ -25,10 +25,14 @@ async function pingService(service) {
     const data = await response.json();
     // console.log(`[${new Date().toISOString()}] Response from ${service.id}:`, data);
 
-    // Adjust logic if "healthy" is the only operational state
-    let mappedStatus = 'degraded';
+    // Adjust logic to map the status coming from the API
+    let mappedStatus = "unknown";
     if (response.ok && data.status === 'healthy') {
       mappedStatus = 'operational';
+    } else if (data.status === 'degraded') {
+      mappedStatus = 'degraded';
+    } else if (data.status === 'unhealthy') {
+      mappedStatus = 'outage';
     }
 
     db.run(
@@ -37,7 +41,7 @@ async function pingService(service) {
     );
 
   } catch (err) {
-    // console.error(`[${new Date().toISOString()}] Error pinging ${service.id}:`, err.message);
+    console.error(`[${new Date().toISOString()}] Error pinging ${service.id}:`, err.message);
 
     db.run(
       `INSERT INTO checks (service_id, status, response_time_ms) VALUES (?, ?, ?)`,
