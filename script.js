@@ -3,41 +3,44 @@ const API_HISTORY = window.APP_CONFIG.BACKEND_API_DAILY_SUMMARY ;
 const API_STATUS_LIVE = window.APP_CONFIG.BACKEND_API_LIVE_STATUS;
 const frontendPollInterval = window.APP_CONFIG.FRONTEND_POLL_INTERVAL_MS;
 
-// Function to fetch live status data from the backend and render the dashboard
+// Function to fetch live status and 30-day history in parallel
 async function fetchLiveStatusData() {
   try {
-    const response = await fetch(API_STATUS_LIVE);
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+    // 1. Fetch both endpoints concurrently using Promise.all
+    const [liveResponse, historyResponse] = await Promise.all([
+      fetch(API_STATUS_LIVE),
+      fetch(API_HISTORY)
+    ]);
+    if (!liveResponse.ok) throw new Error(`Live API HTTP error! Status: ${liveResponse.status}`);
+    if (!historyResponse.ok) throw new Error(`History API HTTP error! Status: ${historyResponse.status}`);
 
-    const serviceStatuses = await response.json();
+    const serviceStatuses = await liveResponse.json();
+    const historyByService = await historyResponse.json();
     // console.log("Fetched live status data:", serviceStatuses);
 
-    // 3. Transform the raw backend object into the format renderDashboard expects
+    // 2. Combine live statuses and 30-day history arrays per service ID
     const services = Object.keys(serviceStatuses).map(serviceId => {
-      const service = serviceStatuses[serviceId];
-
-      // Determine current status based on today's latest recorded status
-      const latestEntry = service.length ? service[service.length - 1] : null;
-      const currentStatus = latestEntry ? latestEntry.status : "operational";
-      console.log(`Service ${serviceId} current status: ${currentStatus}`);
+      const liveData = serviceStatuses[serviceId];
+      const history = historyByService[serviceId] || [];
+      // console.log(serviceId, JSON.stringify(historyByService));
+      // Extract current status from live check object
+      const currentStatus = liveData ? liveData.status : "operational";
 
       return {
         id: serviceId,
-        // Format service ID into a clean display title (e.g., "api-service" -> "API SERVICE")
         name: serviceId.replace(/-/g, " ").toUpperCase(),
         currentStatus: currentStatus,
-        // history: history
+        history: history
       };
     });
 
-    // 4. Render the dashboard with live backend data
+    // Render the dashboard with combined backend data
     renderDashboard(services, 30);
 
   } catch (error) {
     console.error("Failed to fetch status data:", error);
   }
 }
-
 
 // Global Banner Renderer
 function updateGlobalBanner(services) {
@@ -66,7 +69,7 @@ function renderDashboard(services, totalDays = 30) {
   updateGlobalBanner(services);
 
   const dashboard = document.getElementById("status-dashboard");
-  dashboard.innerHTML = ""; 
+  dashboard.innerHTML = "";
 
   services.forEach(service => {
     const serviceCard = document.createElement("div");
@@ -93,7 +96,7 @@ function renderDashboard(services, totalDays = 30) {
   });
 }
 
-function renderSingleServiceBars(container, historyData, totalDays = 30) {
+function renderSingleServiceBars(container, historyData, totalDays=30) {
   container.innerHTML = ""; // Clear existing bars
   // 1. Convert history array into a fast lookup Map keyed by date string ("YYYY-MM-DD")
   const historyMap = new Map(
@@ -109,7 +112,7 @@ function renderSingleServiceBars(container, historyData, totalDays = 30) {
 
     const formattedDate = targetDate.toLocaleDateString(navigator.language, {
       day: "numeric",
-      month: "short", //"numeric",
+      month: "short", // or "numeric",
       year: "numeric"
     });
 
@@ -119,10 +122,10 @@ function renderSingleServiceBars(container, historyData, totalDays = 30) {
     // 4. Create and append the bar element
     const bar = document.createElement("div");
     bar.className = `day-bar ${dayStatus}`;
-    // bar.title = `${formattedDate}: ${dayStatus.replace("-", " ").toUpperCase()}`;
+
     // Set custom attribute for the CSS popover instead of .title
     bar.setAttribute(
-      "data-tooltip", 
+      "data-tooltip",
       `${formattedDate}: ${dayStatus.replace("-", " ").toUpperCase()}`
     );
     container.appendChild(bar);
@@ -138,7 +141,6 @@ function formatStatusText(status) {
     default: return "Unknown";
   }
 }
-
 
 // Initial fetch on page load
 fetchLiveStatusData();
