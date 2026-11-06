@@ -103,13 +103,16 @@ function renderSingleServiceBars(container, historyData, totalDays=30) {
     (historyData || []).map(item => [item.date, item.status])
   );
   const today = new Date();
+
   // 2. Loop chronologically from (totalDays - 1) days ago through Today
   for (let i = totalDays - 1; i >= 0; i--) {
     const targetDate = new Date();
     targetDate.setDate(today.getDate() - i);
-    // Format date as "YYYY-MM-DD" matching your SQLite database output
-    const dateString = targetDate.toISOString().split("T")[0];
 
+    // 1. Generate strictly local YYYY-MM-DD using 'en-CA' locale
+    const dateString = targetDate.toLocaleDateString('en-CA');
+
+    // 2. Format human-readable date for the tooltip
     const formattedDate = targetDate.toLocaleDateString(navigator.language, {
       day: "numeric",
       month: "short", // or "numeric",
@@ -128,6 +131,7 @@ function renderSingleServiceBars(container, historyData, totalDays=30) {
       "data-tooltip",
       `${formattedDate}: ${dayStatus.replace("-", " ").toUpperCase()}`
     );
+
     container.appendChild(bar);
   }
 }

@@ -1,5 +1,6 @@
 const cron = require('node-cron');
 const db = require('./db');
+const { getLocalDateString } = require('./utils/dateHelper');
 
 // Read minutes from .env, default to 5 if missing
 const intervalMinutes = process.env.CHECK_INTERVAL_MINUTES || 5;
@@ -52,8 +53,9 @@ async function pingService(service) {
 }
 
 function updateDailySummary(serviceId) {
-  const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
-  // Calculate today's worst status and save to daily_summaries
+  const timeZone = process.env.APP_TIMEZONE || 'UTC';
+  const today = getLocalDateString(new Date(), timeZone);
+
   const rollupQuery = `
     INSERT INTO daily_summaries (service_id, date, worst_status)
     VALUES (

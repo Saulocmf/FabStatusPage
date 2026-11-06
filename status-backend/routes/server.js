@@ -1,21 +1,28 @@
 var express = require('express');
-const cors = require('cors');
 const db = require('../db.js');
-const startScheduler = require('../scheduler');
 var router = express.Router();
+const startScheduler = require('../scheduler');
+const { getLocalDateString } = require('../utils/dateHelper');
+// const cors = require('cors');
 
 // GET /api/status-history - Super fast read directly from daily_summaries
 router.get('/status-history', (req, res) => {
+  const timeZone = process.env.APP_TIMEZONE || 'UTC';
+  // 1. Calculate the local date 30 days ago
+  const d = new Date();
+  d.setDate(d.getDate() - 30);
+  const thirtyDaysAgoStr = getLocalDateString(d, timeZone);
+
+  // 2. Pass the computed string into the query parameter
   const query = `
     SELECT service_id, date, worst_status AS status
     FROM daily_summaries
-    WHERE date >= DATE('now', '-30 days')
+    WHERE date >= ?
     ORDER BY date ASC
   `;
 
-  db.all(query, [], (err, rows) => {
+  db.all(query, [thirtyDaysAgoStr], (err, rows) => {
     if (err) return res.status(500).json({ error: err.message });
-
     // Format output grouped by service
     const formattedData = {};
     rows.forEach(row => {
