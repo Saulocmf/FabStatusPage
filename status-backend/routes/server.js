@@ -65,12 +65,3 @@ router.get('/status-live', (req, res) => {
 startScheduler();
 
 module.exports = router;
-
-// router.listen(3000, () => console.log('Status server running on http://localhost:3000'));
-
-// endpoint to provide frontend with the configured polling interval
-// router.get('/config', (req, res) => {
-//   res.json({
-//     pollIntervalMs: Number(process.env.FRONTEND_POLL_INTERVAL_MS) //|| 60000
-//   });
-// });

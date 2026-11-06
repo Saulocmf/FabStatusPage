@@ -5,7 +5,7 @@ const db = require('./db');
 const intervalMinutes = process.env.CHECK_INTERVAL_MINUTES || 5;
 const cronSchedule = `*/${intervalMinutes} * * * *`;
 
-// const SERVICES = JSON.parse(process.env.SERVICES_CONFIG);
+
 let SERVICES = [];
 try {
   if (process.env.SERVICES_CONFIG) {
@@ -19,9 +19,8 @@ console.log("Loaded services:", SERVICES);
 async function pingService(service) {
   const start = Date.now();
   try {
-    const response = await fetch(service.url, { timeout: 5000 });
+    const response = await fetch(service.url);
     const duration = Date.now() - start;
-
     const data = await response.json();
     // console.log(`[${new Date().toISOString()}] Response from ${service.id}:`, data);
 
@@ -79,14 +78,13 @@ function updateDailySummary(serviceId) {
 }
 
 function startScheduler() {
-  // Runs every ${intervalMinutes} minutes: `${cronSchedule}`
-  cron.schedule(cronSchedule, () => {
+
+  SERVICES.forEach(pingService); // Run immediately once right now
+
+  cron.schedule(cronSchedule, () => { // Runs every ${intervalMinutes} minutes: `${cronSchedule}`
     console.log(`\n--- Health Check Triggered [${new Date().toISOString()}] ---`);
     SERVICES.forEach(pingService);
   });
 }
-
-// Call once immediately on startup to avoid waiting for the first cron tick
-pingService(SERVICES[0]);
 
 module.exports = startScheduler;

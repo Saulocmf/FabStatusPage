@@ -1,6 +1,8 @@
 // db.js
+const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('../db/status_db.db');
+
+const db = new sqlite3.Database(path.join(__dirname, '../db', 'status_db.db'));
 
 db.serialize(() => {
     // Table for raw health check pings
